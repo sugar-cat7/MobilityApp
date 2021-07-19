@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "emulators": "firebase emulators:start"
+    "emulators": "firebase emulators:start --import=./volume --export-on-exit --project=$(grep NEXT_PUBLIC_FIREBASE_PROJECT_ID .env.local | awk -F'[\"]' '{print $2}')"
   },
   "dependencies": {
     "firebase": "^8.7.1",

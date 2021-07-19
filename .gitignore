@@ -33,6 +33,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local volume
+/volume
+
 # Created by https://www.toptal.com/developers/gitignore/api/react,firebase
 # Edit at https://www.toptal.com/developers/gitignore?templates=react,firebase
 
