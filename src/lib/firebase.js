@@ -14,7 +14,7 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
-if (typeof window !== "undefined") {
+if (process.env.NODE_ENV === 'development') {
   //window.location.hostname === "localhost"がSSRの影響で使えないので。。。
   console.log(
     "testing locally -- hitting local functions and firestore emulators"
