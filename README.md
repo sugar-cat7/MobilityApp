@@ -61,3 +61,4 @@ src
 - 開発はブランチを切って作業, 変更は PR で
 - CSS は頑張る(next の公式は css module 推しなので css module で良さそう)
 - 何もわからんって人は[これ](https://nextjs.org/learn/basics/create-nextjs-app?utm_source=next-site&utm_medium=homepage-cta&utm_campaign=next-website)をやる
+- masterへの直接pushは一応禁止しています
