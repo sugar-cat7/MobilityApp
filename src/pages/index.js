@@ -1,15 +1,14 @@
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../../styles/Home.module.css";
-
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { db } from "../lib/firebase";
 
 const Home = () => {
   const [input, setInput] = useState("");
+  const [output, setOutput] = useState([]);
 
+  //クリックされると発火
   const onClickHandler = useCallback(() => {
-    const ref = db.collection("test");
+    //dbにデータを追加してる
+    const ref = db.collection("test/texts/text");
     ref
       .add({
         bodyText: input,
@@ -24,6 +23,24 @@ const Home = () => {
       });
   }, [input]);
 
+  //初回レンダー後のみ発火
+  useEffect(() => {
+    const ref = db.collection("test/texts/text");
+    const tmpList = [];
+    const unsubscribe = ref.onSnapshot((snapshot) => {
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        tmpList.push({
+          id: doc.id,
+          bodyText: data.bodyText,
+          createdAt: data.createdAt,
+        });
+      });
+    });
+    setOutput(tmpList);
+    return unsubscribe; //監視を解除
+  }, []);
+
   return (
     <>
       <h1>
@@ -36,6 +53,10 @@ const Home = () => {
         }}
       />
       <button onClick={onClickHandler}> Send!!!! </button>
+      {output &&
+        output.map((op) => {
+          return <div key={op.id}>テキスト:{op.bodyText}</div>;
+        })}
     </>
   );
 };
