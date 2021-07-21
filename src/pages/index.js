@@ -1,11 +1,27 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { db } from "../lib/firebase";
+import useSWR from "swr";
+
+//外部APIとかDBからのfetch
+const fetcher = async () => {
+  const testFetchData = [];
+  const doc = await db.collection("test/texts/text").get();
+  if (doc) {
+    doc.forEach((d) => {
+      const data = d.data();
+      testFetchData.push({
+        id: d.id,
+        bodyText: data.bodyText,
+        createdAt: data.createdAt,
+      });
+    });
+  }
+  return testFetchData;
+};
 
 const Home = () => {
   const [input, setInput] = useState("");
-  const [output, setOutput] = useState([]);
 
-  //クリックされると発火
   const onClickHandler = useCallback(() => {
     //dbにデータを追加してる
     const ref = db.collection("test/texts/text");
@@ -23,24 +39,13 @@ const Home = () => {
       });
   }, [input]);
 
-  //初回レンダー後のみ発火
-  useEffect(() => {
-    const ref = db.collection("test/texts/text");
-    const tmpList = [];
-    const unsubscribe = ref.onSnapshot((snapshot) => {
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        tmpList.push({
-          id: doc.id,
-          bodyText: data.bodyText,
-          createdAt: data.createdAt,
-        });
-      });
-    });
-    setOutput(tmpList);
-    return unsubscribe; //監視を解除
-  }, []);
-
+  const { data, error } = useSWR("firestore/test/texts/text", fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
+  if (!data) {
+    return null;
+  }
   return (
     <>
       <h1>
@@ -53,9 +58,9 @@ const Home = () => {
         }}
       />
       <button onClick={onClickHandler}> Send!!!! </button>
-      {output &&
-        output.map((op) => {
-          return <div key={op.id}>テキスト:{op.bodyText}</div>;
+      {!error &&
+        data.map((d) => {
+          return <div key={d.id}>テキスト:{d.bodyText}</div>;
         })}
     </>
   );
