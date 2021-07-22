@@ -10,6 +10,7 @@
     "emulators": "firebase emulators:start --import=./volume --export-on-exit --project=$(grep NEXT_PUBLIC_FIREBASE_PROJECT_ID .env.local | awk -F'[\"]' '{print $2}')"
   },
   "dependencies": {
+    "@line/liff": "^2.12.0",
     "array-move": "^3.0.1",
     "firebase": "^8.7.1",
     "firebase-tools": "^9.16.0",
