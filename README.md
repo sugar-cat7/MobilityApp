@@ -54,6 +54,62 @@ src
 └── pages #メインのページ -> 'pages/index.js → /'  'pages/blog/index.js → /blog'みたいにルーティングされる
 ```
 
+### データのフェッチについて
+
+next には `useSWR` という hook がある [参考](https://swr.vercel.app/ja)
+→ 　 CSR をしたい場合、useEffect で DOM に流し込むより便利そうなのでこっちを使った方が良さそう
+
+(例)
+
+- before
+
+```js
+const [input, setInput] = useState([]);
+
+useEffect(() => {
+  const ref = db.collection("hoge");
+  const tmpList = [];
+  const unsubscribe = ref.onSnapshot((snapshot) => {
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      tmpList.push({
+        //dosomething
+      });
+    });
+  });
+  setOutput(tmpList);
+  return unsubscribe; //監視を解除
+}, []);
+```
+
+- after
+
+```js
+//外部API等からのfetch用の関数
+const fetcher = async () => {
+  const testFetchData = [];
+  const doc = await db.collection("hoge").get();
+  if (doc) {
+    doc.forEach((d) => {
+      const data = d.data();
+      testFetchData.push({
+        //dosomething
+      });
+    });
+  }
+  return testFetchData;
+};
+
+//mainの関数内
+const { data, error } = useSWR("hoge", fetcher, {
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+});
+```
+
+- 注意点
+  SWR はポーリングフェッチを行う(数秒に一度データの検証を行い、差分を検知することで変更をフロントエンドに反映)ので、revalidate を false にしといた方が良い(このアプリの性質的に)
+
 ### その他
 
 - 開発はブランチを切って作業, 変更は PR で

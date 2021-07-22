@@ -1,14 +1,27 @@
 import React, { useState, useCallback, useEffect } from "react";
-import DraggableList from "../components/DraggableList";
 import { db } from "../lib/firebase";
-import arrayMove from 'array-move';
+import useSWR from "swr";
 
+//外部APIとかDBからのfetch
+const fetcher = async () => {
+  const testFetchData = [];
+  const doc = await db.collection("test/texts/text").get();
+  if (doc) {
+    doc.forEach((d) => {
+      const data = d.data();
+      testFetchData.push({
+        id: d.id,
+        bodyText: data.bodyText,
+        createdAt: data.createdAt,
+      });
+    });
+  }
+  return testFetchData;
+};
 
 const Home = () => {
   const [input, setInput] = useState("");
-  const [output, setOutput] = useState([]);
 
-  //クリックされると発火
   const onClickHandler = useCallback(() => {
     //dbにデータを追加してる
     const ref = db.collection("test/texts/text");
@@ -26,31 +39,13 @@ const Home = () => {
       });
   }, [input]);
 
-  //初回レンダー後のみ発火
-  useEffect(() => {
-    const ref = db.collection("test/texts/text");
-    const tmpList = [];
-    const unsubscribe = ref.onSnapshot((snapshot) => {
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        tmpList.push({
-          id: doc.id,
-          bodyText: data.bodyText,
-          createdAt: data.createdAt,
-        });
-      });
-    });
-    setOutput(tmpList);
-    return unsubscribe; //監視を解除
-  }, []);
-
-  // ドラッグしたときの挙動を示すメソッドは引数で渡す
-  const onDrop = (dropResult) => {
-    const { removedIndex, addedIndex } = dropResult;
-    const updater = arrayMove(output, removedIndex, addedIndex);
-    setOutput(updater);
+  const { data, error } = useSWR("firestore/test/texts/text", fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
+  if (!data) {
+    return null;
   }
-
   return (
     <>
       <h1>
@@ -63,7 +58,10 @@ const Home = () => {
         }}
       />
       <button onClick={onClickHandler}> Send!!!! </button>
-      <DraggableList items={output} onDrop={onDrop}/>
+      {!error &&
+        data.map((d) => {
+          return <div key={d.id}>テキスト:{d.bodyText}</div>;
+        })}
     </>
   );
 };
