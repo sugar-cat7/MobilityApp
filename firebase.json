@@ -7,8 +7,27 @@
     "firestore": {
       "port": 8080
     },
+    "functions": {
+      "port": 5001
+    },
+    "hosting": {
+      "port": 5000
+    },
     "ui": {
       "enabled": true
     }
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "hosting": {
+    "public": "./",
+    "rewrites": [
+      {
+        "source": "/webhook",
+        "function": "app"
+      }
+    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
   }
 }
