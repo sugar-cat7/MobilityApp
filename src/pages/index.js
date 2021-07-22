@@ -1,5 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
+import DraggableList from "../components/DraggableList";
 import { db } from "../lib/firebase";
+import arrayMove from 'array-move';
+
 
 const Home = () => {
   const [input, setInput] = useState("");
@@ -41,6 +44,13 @@ const Home = () => {
     return unsubscribe; //監視を解除
   }, []);
 
+  // ドラッグしたときの挙動を示すメソッドは引数で渡す
+  const onDrop = (dropResult) => {
+    const { removedIndex, addedIndex } = dropResult;
+    const updater = arrayMove(output, removedIndex, addedIndex);
+    setOutput(updater);
+  }
+
   return (
     <>
       <h1>
@@ -53,10 +63,7 @@ const Home = () => {
         }}
       />
       <button onClick={onClickHandler}> Send!!!! </button>
-      {output &&
-        output.map((op) => {
-          return <div key={op.id}>テキスト:{op.bodyText}</div>;
-        })}
+      <DraggableList items={output} onDrop={onDrop}/>
     </>
   );
 };
