@@ -25,10 +25,8 @@ if (process.env.NODE_ENV === "development") {
     host: "localhost:8080",
     ssl: false,
   });
-  // functions.useEmulator("http://localhost:5001");
 }
 
 export const db = firebase.firestore();
-// export const functions = firebase.functions();
 export const fieldval = firebase.firestore.FieldValue;
 export default firebase;

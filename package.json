@@ -10,12 +10,15 @@
     "emulators": "firebase emulators:start --import=./volume --export-on-exit --project=$(grep NEXT_PUBLIC_FIREBASE_PROJECT_ID .env.local | awk -F'[\"]' '{print $2}')"
   },
   "dependencies": {
+    "array-move": "^3.0.1",
     "firebase": "^8.7.1",
     "firebase-tools": "^9.16.0",
     "next": "11.0.1",
     "ngrok": "^4.0.1",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-smooth-dnd": "^0.11.1",
+    "swr": "^0.5.6"
   },
   "devDependencies": {
     "eslint": "7.31.0",

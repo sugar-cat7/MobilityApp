@@ -2,7 +2,6 @@
 const functions = require("firebase-functions");
 const express = require("express");
 const line = require("@line/bot-sdk");
-// import functions from "../src/lib";
 const config = {
   channelSecret: "", // LINE Developersでの準備②でメモったChannel Secret
   channelAccessToken: "", // LINE Developersでの準備②でメモったアクセストークン
