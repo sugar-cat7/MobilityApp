@@ -1,5 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { db } from "../lib/firebase";
+import sampleData from "../lib/sampledata";
+import DraggableList from "../components/DraggableList";
+import arrayMove from 'array-move';
 import useSWR from "swr";
 
 const Home = () => {
@@ -17,19 +20,18 @@ const Home = () => {
       if(liff.isInClient()){
         const context = liff.getContext();
         const roomID =  context.roomId || context.groupId;
-        setMsg(roomID)
+        setMsg(roomID) // for debug
+        sampleData(roomID) // for debug
         db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
           const items = [];
           snapshot.forEach((document) => {
             const doc = document.data();
-            alert(doc)
             items.push({
               id: document.id,
               location_name: doc.location_name
             });
-            alert(doc.location_name)
           });
-          setDatas(items);
+          setDatas(items); 
         });
       }else{
         setMsg('undifined')
@@ -37,19 +39,15 @@ const Home = () => {
     });
   }, []);
 
+  const onDrop = ({ removedIndex, addedIndex }) => {
+    setDatas(arrayMove(datas, removedIndex, addedIndex));
+    // fieldの書き換え処理を追記する
+  };
+
   return (
     <>
-      <h1>
-        下のテキストボックスに何か入れてローカルのFirestoreに保存されてるか確認してね
-      </h1>
       <div>roomId : {msg}</div>
-      {datas.map(i => {
-        return (
-          <div key={i.id}>
-            {i.location_name}
-          </div>
-        )
-      })}
+      <DraggableList items={datas} onDrop={onDrop} />
     </>
   );
 };

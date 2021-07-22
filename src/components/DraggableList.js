@@ -7,7 +7,7 @@ export default function DraggableList(props){
       <Container onDrop={props.onDrop}>
         {props.items.map(item => {
           return (<Draggable key={item.id}
-            >aaa{item.bodyText}</Draggable>)
+            >{item.location_name}</Draggable>)
       })}
       </Container>
     </div>
