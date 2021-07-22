@@ -27,7 +27,7 @@ export const InputNewRoute = () => {
             <h1>tolist</h1>
             <h1>{toList}</h1>
             <input value={to} onChange={handleChange} type="text" />
-            <BasicButton onClick={addRoute} label={"追加する"}　/>
+            <BasicButton onClick={addRoute} label={"追加する"} />
         </>
     )
 }
