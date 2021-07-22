@@ -116,3 +116,30 @@ const { data, error } = useSWR("hoge", fetcher, {
 - CSS は頑張る(next の公式は css module 推しなので css module で良さそう)
 - 何もわからんって人は[これ](https://nextjs.org/learn/basics/create-nextjs-app?utm_source=next-site&utm_medium=homepage-cta&utm_campaign=next-website)をやる
 - master への直接 push は一応禁止しています
+
+### LINE MessageAPI について
+
+参考になりそうな記事
+https://qiita.com/n0bisuke/items/909881c8866e3f2ca642
+https://qiita.com/n0bisuke/items/ceaa09ef8898bee8369d
+
+- setup
+  [LINE Developers](https://developers.line.biz/ja/services/messaging-api/)から自分のチャンネルを作る
+  →channelSecret と channelAccessToken を取得
+
+- functions/index.js の中の config を設定
+
+```js
+const config = {
+  channelSecret: "", // LINE Developersでの準備②でメモったChannel Secret
+  channelAccessToken: "", // LINE Developersでの準備②でメモったアクセストークン
+};
+```
+
+具体的に動かす方法
+
+```sh
+$ yarn install
+$ yarn emulators
+$ ngrok http 5000
+```
