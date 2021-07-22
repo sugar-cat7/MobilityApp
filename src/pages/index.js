@@ -3,6 +3,8 @@ import { db } from "../lib/firebase";
 import sampleData from "../lib/sampledata";
 import DraggableList from "../components/DraggableList";
 import arrayMove from 'array-move';
+import { InputNewRoute } from '../components/InputNewRoute';
+import { MakeRoute } from '../components/MakeRoute';
 import useSWR from "swr";
 
 const Home = () => {
@@ -48,6 +50,8 @@ const Home = () => {
     <>
       <div>roomId : {msg}</div>
       <DraggableList items={datas} onDrop={onDrop} />
+      <InputNewRoute />
+      <MakeRoute />
     </>
   );
 };
