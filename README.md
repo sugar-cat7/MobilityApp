@@ -139,7 +139,7 @@ const config = {
 具体的に動かす方法
 
 ```sh
-$ yarn install
+$ yarn install <- functions内で
 $ yarn emulators
-$ ngrok http 5000
+$ yarn ngrok http 5000
 ```

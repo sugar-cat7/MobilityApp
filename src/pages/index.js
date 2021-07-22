@@ -43,9 +43,9 @@ const Home = () => {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   });
-  if (!data) {
-    return null;
-  }
+  // if (!data) {
+  //   return null;
+  // }
   return (
     <>
       <h1>
@@ -58,7 +58,7 @@ const Home = () => {
         }}
       />
       <button onClick={onClickHandler}> Send!!!! </button>
-      {!error &&
+      {data &&
         data.map((d) => {
           return <div key={d.id}>テキスト:{d.bodyText}</div>;
         })}
