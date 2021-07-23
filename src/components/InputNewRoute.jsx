@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { BasicButton } from './BasicButton';
+import { db } from '../lib/firebase';
+
+const roomsRef = db.collection('rooms')
 
 // 新しい目的地を追加
-export const InputNewRoute = () => {
+export const InputNewRoute = (props) => {
     const [to, setTo] = useState("")
     const [toList, setToList] = useState([])
 
@@ -17,17 +20,30 @@ export const InputNewRoute = () => {
     }
 
     // 目的地を追加
-    const addRoute = () => {
+    const addRoute = (props) => {
+        if (!to) {
+            alert("新しい目的地を入力してください");
+            return;
+        }
         setToList(toList.concat(to))
-        deleteValue()
-    }
+        roomsRef.doc(props.roomID).add({
+            waypoints: toList,
+        }, { merge: true })
+        .then(() => {
+            console.log(props.roomID);
+        })
+        .catch((error) => {
+            alert("失敗しました")
+        })
+
+        deleteValue();
+    };
 
     return (
         <>
             <h1>tolist</h1>
-            <h1>{toList}</h1>
             <input value={to} onChange={handleChange} type="text" />
-            <BasicButton onClick={addRoute} label={"追加する"}　/>
+            <BasicButton onClick={(to) => addRoute(to)} label={"追加する"} />
         </>
     )
 }
