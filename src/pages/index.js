@@ -1,67 +1,133 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { db } from "../lib/firebase";
+import addData from "../lib/addData";
+import DraggableList from "../components/DraggableList";
+import arrayMove from 'array-move';
+import { InputNewRoute } from '../components/InputNewRoute';
+import { MakeRoute } from '../components/MakeRoute';
+import { useRouter } from "next/router";
 import useSWR from "swr";
 
-//外部APIとかDBからのfetch
-const fetcher = async () => {
-  const testFetchData = [];
-  const doc = await db.collection("test/texts/text").get();
-  if (doc) {
-    doc.forEach((d) => {
-      const data = d.data();
-      testFetchData.push({
-        id: d.id,
-        bodyText: data.bodyText,
-        createdAt: data.createdAt,
+const Home = () => {
+  const router = useRouter();
+  const [datas, setDatas] = useState([]);
+  const [liff, setLiff] = useState();
+  const [roomID, setRoomID] = useState('');
+  const [order, setOrder] = useState([]);
+
+  function sleep(waitMsec) {
+    var startMsec = new Date();
+   
+    // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+    while (new Date() - startMsec < waitMsec);
+  }
+
+  // dbが更新された時に呼び出してリロードする
+  const updateDatas = () => {
+    if(!roomID){
+      console.log("roomID is undifined");
+      return;
+    }
+    // dbから経路の順番を取得
+    db.collection('rooms').doc(roomID).get().then((field) => {
+      if(!field.exists){
+        // fieldが存在しない場合は処理を終える
+        return;
+      }
+      const newOrder = field.data().order;
+      setOrder(newOrder);
+      // 経由地点のデータを取得
+      db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+        const items = [];
+        snapshot.forEach((document) => {
+          const doc = document.data();
+          console.log(doc)
+          items.push({
+            id: document.id,
+            location_name: doc.location_name
+          });
+        });
+        if(!newOrder){
+          // 順番のデータが取得できていない場合
+          setDatas(items);
+          return;
+        }
+        const orderedItems = [];
+        newOrder.forEach(id => {
+          const foundItem = items.find((item) => item.id === id);
+          if(foundItem) orderedItems.push(foundItem);
+          else{
+            console.log(`id:${id} is exists in order data but did not find in documents.`)
+          }
+        });
+        setDatas(orderedItems);
+      });
+    }).catch(err => {
+      alert(err)
+      db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+        const items = [];
+        snapshot.forEach((document) => {
+          const doc = document.data();
+          items.push({
+            id: document.id,
+            location_name: doc.location_name
+          });
+        });
+        setDatas(items)
       });
     });
   }
-  return testFetchData;
-};
 
-const Home = () => {
-  const [input, setInput] = useState("");
-
-  const onClickHandler = useCallback(() => {
-    //dbにデータを追加してる
-    const ref = db.collection("test/texts/text");
-    ref
-      .add({
-        bodyText: input,
-        createdAt: new Date(),
-      })
-      .then(() => {
-        alert("success!");
-        setInput("");
-      })
-      .catch((err) => {
-        alert("fail!", err.message);
+  useEffect(() => {
+    const liff = require('@line/liff');
+    if(liff.isInClient()){
+      liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID }).then(() => {
+        if(!liff.isLoggedIn()){
+          liff.login();
+        }
+        const context = liff.getContext();
+        const roomID =  context.roomId || context.groupId;
+        setRoomID(roomID);
+        addData(roomID) // for debug
+        addData(roomID, "筑波大学") // for debug
+        addData(roomID, "東京駅") // for debug
+        setLiff(liff);
       });
-  }, [input]);
+    }
+  }, []);
 
-  const { data, error } = useSWR("firestore/test/texts/text", fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
-  // if (!data) {
-    // return null;
-  // }
+  useEffect(() => {
+    const liff = require('@line/liff');
+    if(liff.isInClient()) return;
+    if (router.asPath !== router.route) {
+      if(router.query.roomID) {
+        setRoomID(router.query.roomID);
+      }
+    }
+  }, [router]);
+
+  useEffect(() => {
+    updateDatas();
+  }, [roomID]);
+
+  const onDrop = ({ removedIndex, addedIndex }) => {
+    const newData = arrayMove(datas, removedIndex, addedIndex);
+    setDatas(newData);
+    // fieldの書き換え処理を追記する
+    const newOrder = newData.map((data) => data.id);
+    db.collection('rooms').doc(roomID).set({
+      order: newOrder
+    }).then(() => {
+      updateDatas();
+    });
+  };
+
   return (
     <>
-      <h1>
-        下のテキストボックスに何か入れてローカルのFirestoreに保存されてるか確認してね
-      </h1>
-      <input
-        value={input}
-        onChange={(e) => {
-          setInput(e.target.value);
-        }}
-      />
-      <button onClick={onClickHandler}> Send!!!! </button>
-      {!error &&
-        data.map((d) => {
-          return <div key={d.id}>テキスト:{d.bodyText}</div>;
-        })}
+      <div>roomId : {roomID}</div>
+      <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
+      <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
+      <MakeRoute />
     </>
   );
 };

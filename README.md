@@ -139,7 +139,10 @@ const config = {
 具体的に動かす方法
 
 ```sh
-$ yarn install
+$ yarn install <- functions内で
 $ yarn emulators
-$ ngrok http 5000
+$ yarn ngrok http 5000
 ```
+
+- webhook に ngrok http 5000 で得た URL を追加 → 動作確認で 200 が res として帰ってくれば OK
+- messaging API から QR コードを読み込んで LINE Bot 追加で動作確認できる
