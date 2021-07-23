@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BasicButton } from './BasicButton';
 import { db } from '../lib/firebase';
+import addData from '../lib/addData'
 
 const roomsRef = db.collection('rooms')
 
@@ -25,15 +26,7 @@ export const InputNewRoute = (props) => {
             alert("新しい目的地を入力してください");
             return;
         }
-        roomsRef.doc(props.roomID).collection("waypoints").add({
-            waypoint: to,
-        }, { merge: true })
-        .then(() => {
-            console.log(props.roomID);
-        })
-        .catch((error) => {
-            alert("失敗しました")
-        })
+        addData(props.roomID, to, props.updateDatas);
 
         deleteValue();
     };

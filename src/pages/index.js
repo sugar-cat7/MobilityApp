@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { db } from "../lib/firebase";
-import sampleData from "../lib/sampledata";
+import addData from "../lib/addData";
 import DraggableList from "../components/DraggableList";
 import arrayMove from 'array-move';
 import { InputNewRoute } from '../components/InputNewRoute';
@@ -13,6 +13,14 @@ const Home = () => {
   const [datas, setDatas] = useState([]);
   const [liff, setLiff] = useState();
   const [roomID, setRoomID] = useState('');
+  const [order, setOrder] = useState([]);
+
+  function sleep(waitMsec) {
+    var startMsec = new Date();
+   
+    // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+    while (new Date() - startMsec < waitMsec);
+  }
 
   // dbが更新された時に呼び出してリロードする
   const updateDatas = () => {
@@ -20,16 +28,53 @@ const Home = () => {
       console.log("roomID is undifined");
       return;
     }
-    db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
-      const items = [];
-      snapshot.forEach((document) => {
-        const doc = document.data();
-        items.push({
-          id: document.id,
-          location_name: doc.location_name
+    // dbから経路の順番を取得
+    db.collection('rooms').doc(roomID).get().then((field) => {
+      if(!field.exists){
+        // fieldが存在しない場合は処理を終える
+        return;
+      }
+      const newOrder = field.data().order;
+      setOrder(newOrder);
+      // 経由地点のデータを取得
+      db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+        const items = [];
+        snapshot.forEach((document) => {
+          const doc = document.data();
+          console.log(doc)
+          items.push({
+            id: document.id,
+            location_name: doc.location_name
+          });
         });
+        if(!newOrder){
+          // 順番のデータが取得できていない場合
+          setDatas(items);
+          return;
+        }
+        const orderedItems = [];
+        newOrder.forEach(id => {
+          const foundItem = items.find((item) => item.id === id);
+          if(foundItem) orderedItems.push(foundItem);
+          else{
+            console.log(`id:${id} is exists in order data but did not find in documents.`)
+          }
+        });
+        setDatas(orderedItems);
       });
-      setDatas(items);
+    }).catch(err => {
+      alert(err)
+      db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+        const items = [];
+        snapshot.forEach((document) => {
+          const doc = document.data();
+          items.push({
+            id: document.id,
+            location_name: doc.location_name
+          });
+        });
+        setDatas(items)
+      });
     });
   }
 
@@ -43,7 +88,9 @@ const Home = () => {
         const context = liff.getContext();
         const roomID =  context.roomId || context.groupId;
         setRoomID(roomID);
-        sampleData(roomID) // for debug
+        addData(roomID) // for debug
+        addData(roomID, "筑波大学") // for debug
+        addData(roomID, "東京駅") // for debug
         setLiff(liff);
       });
     }
@@ -64,14 +111,21 @@ const Home = () => {
   }, [roomID]);
 
   const onDrop = ({ removedIndex, addedIndex }) => {
-    setDatas(arrayMove(datas, removedIndex, addedIndex));
+    const newData = arrayMove(datas, removedIndex, addedIndex);
+    setDatas(newData);
     // fieldの書き換え処理を追記する
+    const newOrder = newData.map((data) => data.id);
+    db.collection('rooms').doc(roomID).set({
+      order: newOrder
+    }).then(() => {
+      updateDatas();
+    });
   };
 
   return (
     <>
       <div>roomId : {roomID}</div>
-      <InputNewRoute roomID="testtesttest" />
+      <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <MakeRoute />
     </>

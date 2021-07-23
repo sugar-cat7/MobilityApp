@@ -32,7 +32,12 @@ export default function DraggableList(props){
       return;
     }
     db.collection('rooms').doc(props.roomID).collection('waypoints').doc(selectedItem.id).delete().then(() => {
-      props.update();
+      // 経路データからも削除しておく
+      db.collection('rooms').doc(props.roomID).update({
+        order: fieldval.arrayRemove(selectedItem.id)
+      }).then(() => {
+        props.update();
+      });
     }).catch((err) => {
       console.log(err);
     });
