@@ -6,6 +6,7 @@ import arrayMove from 'array-move';
 import { InputNewRoute } from '../components/InputNewRoute';
 import { MakeRoute } from '../components/MakeRoute';
 import { useRouter } from "next/router";
+import SelectStart from '../components/SelectStart';
 import useSWR from "swr";
 
 const Home = () => {
@@ -14,6 +15,7 @@ const Home = () => {
   const [liff, setLiff] = useState();
   const [roomID, setRoomID] = useState('');
   const [order, setOrder] = useState([]);
+  const [startingPointHere, setStartingPointHere] = useState(true);
 
   function sleep(waitMsec) {
     var startMsec = new Date();
@@ -41,7 +43,6 @@ const Home = () => {
         const items = [];
         snapshot.forEach((document) => {
           const doc = document.data();
-          console.log(doc)
           items.push({
             id: document.id,
             location_name: doc.location_name
@@ -122,11 +123,17 @@ const Home = () => {
     });
   };
 
+  const onStartingPointChange = (e) => {
+    console.log(e.target.checked)
+    setStartingPointHere(e.target.checked);
+  }
+
   return (
     <>
       <div>roomId : {roomID}</div>
       <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
+      <SelectStart checked={startingPointHere} onChange={onStartingPointChange} />
       <MakeRoute />
     </>
   );
