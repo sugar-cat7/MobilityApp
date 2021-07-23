@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import SelectStart from '../components/SelectStart';
 import useSWR from "swr";
 import { Layout } from "../components/layout";
+import { NotLiffLocInfo } from "../components/NotLiffLocInfo";
 
 const Home = () => {
   const router = useRouter();
@@ -125,6 +126,7 @@ const Home = () => {
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <SelectStart checked={startingPointHere} onChange={onStartingPointChange} />
       <MakeRoute items={datas} startHere={startingPointHere} />
+      <NotLiffLocInfo />
     </Layout>
   );
 };
