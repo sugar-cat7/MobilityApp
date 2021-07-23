@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { db } from "../lib/firebase";
-import sampleData from "../lib/sampledata";
+import addData from "../lib/addData";
 import DraggableList from "../components/DraggableList";
 import arrayMove from 'array-move';
 import { InputNewRoute } from '../components/InputNewRoute';
@@ -14,6 +14,13 @@ const Home = () => {
   const [liff, setLiff] = useState();
   const [roomID, setRoomID] = useState('');
   const [order, setOrder] = useState([]);
+
+  function sleep(waitMsec) {
+    var startMsec = new Date();
+   
+    // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+    while (new Date() - startMsec < waitMsec);
+  }
 
   // dbが更新された時に呼び出してリロードする
   const updateDatas = () => {
@@ -34,6 +41,7 @@ const Home = () => {
         const items = [];
         snapshot.forEach((document) => {
           const doc = document.data();
+          console.log(doc)
           items.push({
             id: document.id,
             location_name: doc.location_name
@@ -80,9 +88,9 @@ const Home = () => {
         const context = liff.getContext();
         const roomID =  context.roomId || context.groupId;
         setRoomID(roomID);
-        sampleData(roomID) // for debug
-        sampleData(roomID, "筑波大学") // for debug
-        sampleData(roomID, "東京駅") // for debug
+        addData(roomID) // for debug
+        addData(roomID, "筑波大学") // for debug
+        addData(roomID, "東京駅") // for debug
         setLiff(liff);
       });
     }
@@ -117,8 +125,8 @@ const Home = () => {
   return (
     <>
       <div>roomId : {roomID}</div>
+      <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
-      <InputNewRoute />
       <MakeRoute />
     </>
   );

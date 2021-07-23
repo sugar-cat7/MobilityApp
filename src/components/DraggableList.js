@@ -44,7 +44,6 @@ export default function DraggableList(props){
     onDialogClose();
   }
 
-
   return (
     <div>
       <List>
