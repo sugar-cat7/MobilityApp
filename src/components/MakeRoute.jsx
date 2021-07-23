@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BasicButton } from './BasicButton';
+import { Button } from "@material-ui/core";
+import styles from "./MakeRoute.module.css";
 
 export const MakeRoute = (props) => {
     const [isClicked, setIsClicked] = useState(false);
@@ -32,17 +33,15 @@ export const MakeRoute = (props) => {
         
         setIsClicked(true)
     }
-    if (isClicked) {
-        return (
-            <>
-            <BasicButton label={"経路を作成する"} onClick={makeRoute} />
-            <a className="btn btn-primary" href={url}>マップへ</a>
-            </>
-        )
-    }
     return (
-        <>
-            <BasicButton label={"経路を作成する"} onClick={makeRoute} />
-        </>
+        <div className={styles.margintop}>
+            <Button color="primary" variant="contained" onClick={makeRoute} >経路を作成</Button>
+            {url ?
+                <div className={styles.margintop}>
+                    <a href={url} className={styles.a}>Google Mapへ</a>
+                </div>
+                : null
+            }
+        </div>
     )
 }
