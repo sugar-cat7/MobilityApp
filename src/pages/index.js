@@ -7,6 +7,7 @@ import { MakeRoute } from '../components/MakeRoute';
 import { useRouter } from "next/router";
 import SelectStart from '../components/SelectStart';
 import useSWR from "swr";
+import { Layout } from "../components/layout";
 
 const Home = () => {
   const router = useRouter();
@@ -118,13 +119,13 @@ const Home = () => {
   }
 
   return (
-    <>
+    <Layout home>
       <div>roomId : {roomID}</div>
       <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
       <MakeRoute items={datas} startHere={startingPointHere} />
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <SelectStart checked={startingPointHere} onChange={onStartingPointChange} />
-    </>
+    </Layout>
   );
 };
 
