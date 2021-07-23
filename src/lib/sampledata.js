@@ -1,13 +1,13 @@
-import { db } from "../lib/firebase";
+import { db, fieldval } from "../lib/firebase";
 
-export default function sampleData(roomID){
+
+
+export default function sampleData(roomID, to = "つくば駅"){
   db.collection('rooms').doc(roomID).collection('waypoints').add({
-    location_name: "つくば駅"
-  })
-  db.collection('rooms').doc(roomID).collection('waypoints').add({
-    location_name: "筑波大学"
-  })
-  db.collection('rooms').doc(roomID).collection('waypoints').add({
-    location_name: "イーアス"
+    location_name: to
+  }).then((docRef) => {
+    db.collection('rooms').doc(roomID).update({
+      order: fieldval.arrayUnion(docRef.id)
+    });
   })
 }

@@ -13,6 +13,7 @@ const Home = () => {
   const [datas, setDatas] = useState([]);
   const [liff, setLiff] = useState();
   const [roomID, setRoomID] = useState('');
+  const [order, setOrder] = useState([]);
 
   // dbが更新された時に呼び出してリロードする
   const updateDatas = () => {
@@ -20,16 +21,35 @@ const Home = () => {
       console.log("roomID is undifined");
       return;
     }
-    db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
-      const items = [];
-      snapshot.forEach((document) => {
-        const doc = document.data();
-        items.push({
-          id: document.id,
-          location_name: doc.location_name
+    // dbから経路の順番を取得
+    db.collection('rooms').doc(roomID).get().then((field) => {
+      const newOrder = field.data().order;
+      setOrder(newOrder);
+      // 経由地点のデータを取得
+      db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+        const items = [];
+        snapshot.forEach((document) => {
+          const doc = document.data();
+          items.push({
+            id: document.id,
+            location_name: doc.location_name
+          });
         });
+        if(!newOrder){
+          // 順番のデータが取得できていない場合
+          setDatas(items);
+          return;
+        }
+        const orderedItems = [];
+        newOrder.forEach(id => {
+          const foundItem = items.find((item) => item.id === id);
+          if(foundItem) orderedItems.push(foundItem);
+          else{
+            console.log(`id:${id} is exists in order data but did not find in documents.`)
+          }
+        });
+        setDatas(orderedItems);
       });
-      setDatas(items);
     });
   }
 
@@ -44,6 +64,8 @@ const Home = () => {
         const roomID =  context.roomId || context.groupId;
         setRoomID(roomID);
         sampleData(roomID) // for debug
+        sampleData(roomID, "筑波大学") // for debug
+        sampleData(roomID, "東京駅") // for debug
         setLiff(liff);
       });
     }
@@ -64,8 +86,15 @@ const Home = () => {
   }, [roomID]);
 
   const onDrop = ({ removedIndex, addedIndex }) => {
-    setDatas(arrayMove(datas, removedIndex, addedIndex));
+    const newData = arrayMove(datas, removedIndex, addedIndex);
+    setDatas(newData);
     // fieldの書き換え処理を追記する
+    const newOrder = newData.map((data) => data.id);
+    db.collection('rooms').doc(roomID).set({
+      order: newOrder
+    }).then(() => {
+      updateDatas();
+    });
   };
 
   return (
