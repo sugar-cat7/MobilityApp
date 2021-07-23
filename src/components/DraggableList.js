@@ -15,6 +15,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import { db, fieldval } from "../lib/firebase";
+import deleteWaypointFunc from '../lib/deleteWaypoint';
 
 
 export default function DraggableList(props){
@@ -31,16 +32,7 @@ export default function DraggableList(props){
       onDialogClose();
       return;
     }
-    db.collection('rooms').doc(props.roomID).collection('waypoints').doc(selectedItem.id).delete().then(() => {
-      // 経路データからも削除しておく
-      db.collection('rooms').doc(props.roomID).update({
-        order: fieldval.arrayRemove(selectedItem.id)
-      }).then(() => {
-        props.update();
-      });
-    }).catch((err) => {
-      console.log(err);
-    });
+    deleteWaypointFunc(props.roomID, selectedItem.id, props.update)
     onDialogClose();
   }
 
