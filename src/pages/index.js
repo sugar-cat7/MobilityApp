@@ -43,9 +43,9 @@ const Home = () => {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   });
-  if (!data) {
-    return null;
-  }
+  // if (!data) {
+    // return null;
+  // }
   return (
     <>
       <h1>
