@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MakeRouteButton } from './MakeRouteButton';
+import { BasicButton } from './BasicButton';
 import { useRouter } from 'next/router';
 
 export const MakeRoute = (props) => {
@@ -33,7 +33,7 @@ export const MakeRoute = (props) => {
     
     return (
         <>
-            <MakeRouteButton label={"経路を作成する"} onClick={makeRoute} />
+            <BasicButton label={"経路を作成する"} onClick={makeRoute} />
         </>
     )
 }

@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     }
 })
 
-export const MakeRouteButton = (props) => {
+export const BasicButton = (props) => {
     const classes = useStyles();
 
     return (
