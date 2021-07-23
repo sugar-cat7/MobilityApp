@@ -3,8 +3,8 @@ const functions = require("firebase-functions");
 const express = require("express");
 const line = require("@line/bot-sdk");
 const config = {
-  channelSecret: "", // LINE Developersでの準備②でメモったChannel Secret
-  channelAccessToken: "", // LINE Developersでの準備②でメモったアクセストークン
+  channelSecret: "c50bab059db1c49e3f4bd250f13ad581", // LINE Developersでの準備②でメモったChannel Secret
+  channelAccessToken: "mMyWONiUXZ4sKIad1M5k2urnkO3RZngDMycxLP6+TsU9JfUtOdcOripsTAQ8Nk2rHWjkscZZzn/lXu0loTAL2nJwQ6U6SUq00QOeO/PSYJFO+LjZEqA2qLgbLKIgAssz1cyhR+aVdwD8BWH22YdBEwdB04t89/1O/w1cDnyilFU=", // LINE Developersでの準備②でメモったアクセストークン
 };
 
 const app = express();
@@ -23,10 +23,24 @@ async function handleEvent(event) {
     return Promise.resolve(null);
   }
 
-  return client.replyMessage(event.replyToken, {
-    type: "text",
-    text: event.message.text + "を受け取りました。",
-  });
+  var mention = "@mobility.app-bot";
+    if (event.message.text.includes(mention)) {
+      var addPoint = event.message.text.replace(mention," ");
+      const obj = {
+        type: "text",
+        text: addPoint + "を受け取りました。",
+      };
+      return client.replyMessage(event.replyToken, obj);
+    }
+    else  {
+      const obj = {
+        type: "text",
+        text: event.message.text + "を受け取りました。",
+      };
+      return client.replyMessage(event.replyToken, obj);
+      }
+
+  
 }
 
 exports.app = functions.https.onRequest(app);
