@@ -71,7 +71,7 @@ const Home = () => {
   return (
     <>
       <div>roomId : {roomID}</div>
-      <InputNewRoute roomID={roomID} />
+      <InputNewRoute roomID="testtesttest" />
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <MakeRoute />
     </>
