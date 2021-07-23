@@ -23,6 +23,10 @@ const Home = () => {
     }
     // dbから経路の順番を取得
     db.collection('rooms').doc(roomID).get().then((field) => {
+      if(!field.exists){
+        // fieldが存在しない場合は処理を終える
+        return;
+      }
       const newOrder = field.data().order;
       setOrder(newOrder);
       // 経由地点のデータを取得
