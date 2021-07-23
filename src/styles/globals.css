@@ -1,4 +1,6 @@
-html,
+html {
+  background-color: rgba(235, 246, 235, 0.568);
+}
 body {
   padding: 0;
   margin: 0;

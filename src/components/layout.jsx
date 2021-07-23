@@ -5,9 +5,10 @@ export const Layout = ({ children, home }) => {
     <>
       <div className={styles.container}>
         <header className={styles.header}>ヘッダーつける？</header>
-        <div className={styles.main}>
+        <div className={styles.body}>
           <main>{children}</main>
         </div>
+        <footer className={styles.footer}>© 2021 mai-ogi</footer>
       </div>
     </>
   );
