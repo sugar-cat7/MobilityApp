@@ -12,8 +12,7 @@ const useStyles = makeStyles({
     }
 })
 
-// 使い回し用ボタンコンポーネント
-export const BasicButton = (props) => {
+export const MakeRouteButton = (props) => {
     const classes = useStyles();
 
     return (

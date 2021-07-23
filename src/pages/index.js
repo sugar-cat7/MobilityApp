@@ -122,9 +122,9 @@ const Home = () => {
     <Layout home>
       <div>roomId : {roomID}</div>
       <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
-      <MakeRoute items={datas} startHere={startingPointHere} />
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <SelectStart checked={startingPointHere} onChange={onStartingPointChange} />
+      <MakeRoute items={datas} startHere={startingPointHere} />
     </Layout>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BasicButton } from './BasicButton';
+import { InputNewRouteButton } from './InputNewRouteButton';
 import { db } from '../lib/firebase';
 import addData from '../lib/addData'
 
@@ -35,7 +35,7 @@ export const InputNewRoute = (props) => {
         <>
             <h1>tolist</h1>
             <input value={to} onChange={handleChange} type="text" />
-            <BasicButton onClick={(to) => addRoute(to)} label={"追加する"} />
+            <InputNewRouteButton onClick={(to) => addRoute(to)} label={"追加する"} />
         </>
     )
 }

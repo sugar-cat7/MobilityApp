@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { BasicButton } from './BasicButton';
+import { MakeRouteButton } from './MakeRouteButton';
+import { useRouter } from 'next/router';
 
 export const MakeRoute = (props) => {
-    const [isClicked, setIsClicked] = useState(false);
-    const [url, setUrl] = useState("");
+    const router = useRouter();
     
     const fetchLocationHere = async () => {
         // 現在の位置情報を取得
@@ -21,28 +21,19 @@ export const MakeRoute = (props) => {
             const destinationUrl = "&destination=" + locationOrder[locationOrder.length - 1]
             const waypointsUrl = "&waypoints=" + locationOrder.slice(1, locationOrder.length - 1).join("|")
             const mergedUrl = googlemapBaseUrl + originUrl + destinationUrl + waypointsUrl
-            setUrl(mergedUrl)
+            router.push(mergedUrl)
         } else {
             const destinationUrl = "&destination=" + locationOrder[locationOrder.length - 1]
             const waypointsUrl = "&waypoints=" + locationOrder.slice(0,locationOrder.length - 1).join("|")
             const mergedUrl = googlemapBaseUrl + destinationUrl + waypointsUrl
-            setUrl(mergedUrl)
+            router.push(mergedUrl)
         }
         
-        
-        setIsClicked(true)
     }
-    if (isClicked) {
-        return (
-            <>
-            <BasicButton label={"経路を作成する"} onClick={makeRoute} />
-            <a className="btn btn-primary" href={url}>マップへ</a>
-            </>
-        )
-    }
+    
     return (
         <>
-            <BasicButton label={"経路を作成する"} onClick={makeRoute} />
+            <MakeRouteButton label={"経路を作成する"} onClick={makeRoute} />
         </>
     )
 }
