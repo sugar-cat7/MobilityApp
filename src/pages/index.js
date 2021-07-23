@@ -23,6 +23,10 @@ const Home = () => {
     }
     // dbから経路の順番を取得
     db.collection('rooms').doc(roomID).get().then((field) => {
+      if(!field.exists){
+        // fieldが存在しない場合は処理を終える
+        return;
+      }
       const newOrder = field.data().order;
       setOrder(newOrder);
       // 経由地点のデータを取得
@@ -49,6 +53,19 @@ const Home = () => {
           }
         });
         setDatas(orderedItems);
+      });
+    }).catch(err => {
+      alert(err)
+      db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+        const items = [];
+        snapshot.forEach((document) => {
+          const doc = document.data();
+          items.push({
+            id: document.id,
+            location_name: doc.location_name
+          });
+        });
+        setDatas(items)
       });
     });
   }
