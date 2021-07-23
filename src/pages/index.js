@@ -132,7 +132,7 @@ const Home = () => {
     <>
       <div>roomId : {roomID}</div>
       <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
-      <MakeRoute items={datas} />
+      <MakeRoute items={datas} startHere={startingPointHere} />
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <SelectStart checked={startingPointHere} onChange={onStartingPointChange} />
     </>
