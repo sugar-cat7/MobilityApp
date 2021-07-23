@@ -55,7 +55,7 @@ export default function DraggableList(props){
                   <RoomOutlinedIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={item.location_name} />
+              <ListItemText primary={item.tag} />
               <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="delete" onClick={onDeleteClick}>
                   <DeleteIcon />
@@ -70,7 +70,7 @@ export default function DraggableList(props){
         <Dialog open={dialog} onClose={onDialogClose}>
           <DialogContent>
             <DialogContentText>
-              {selectedItem.location_name}を経由地点から削除しますか？
+              {selectedItem.tag}を経由地点から削除しますか？
             </DialogContentText>
             <DialogActions>
               <Button onClick={deleteWaypoint}>

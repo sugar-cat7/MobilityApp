@@ -1,7 +1,8 @@
 import { db, fieldval } from "./firebase";
 import { nanoid } from "nanoid";
 
-export default function addData(roomID, to = "つくば駅", cb){
+// 引数のfirstのflagでエラー時の無限ループを防ぐ
+export default function addData(roomID, to, cb){
   const ref = db.collection('rooms').doc(roomID);
 
   db.runTransaction((transaction) => {
@@ -11,20 +12,27 @@ export default function addData(roomID, to = "つくば駅", cb){
         transaction.update(ref, {
           order: fieldval.arrayUnion(id)
         })
-        transaction.set(ref.collection('waypoints').doc(id), {
-            location_name: to
-        })
+        transaction.set(ref.collection('waypoints').doc(id), to)
       }else{
         transaction.set(doc, {
           order: [id]
         });
-        transaction.set(ref.collection('waypoints').doc(id), {
-          location_name: to
-        });
+        transaction.set(ref.collection('waypoints').doc(id), to);
       }
       return true
-    }) 
+    })
   }).then(() => {
     cb();
-  }).catch(e => console.log(e))
+  }).catch(e => {
+    // transaction.setはfieldがない場合初期化しなければエラーが起きるのでデータを初期化
+    if(e.code === "invalid-argument"){
+      ref.set({
+        order: []
+      }).then(() => {
+        addData(roomID, to, cb)
+      });
+    }else{
+      console.log(e);
+    }
+  })
 }
