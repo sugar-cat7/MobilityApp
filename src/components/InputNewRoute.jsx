@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { BasicButton } from './BasicButton';
 import { db } from '../lib/firebase';
 import addData from '../lib/addData'
 import styles from "./InputNewRoute.module.css";
 import { Button } from '@material-ui/core';
-import { line } from 'cli-spinners';
 
 const roomsRef = db.collection('rooms')
 
