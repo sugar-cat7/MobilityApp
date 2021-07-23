@@ -20,14 +20,13 @@ export const InputNewRoute = (props) => {
     }
 
     // 目的地を追加
-    const addRoute = (props) => {
+    const addRoute = () => {
         if (!to) {
             alert("新しい目的地を入力してください");
             return;
         }
-        setToList(toList.concat(to))
-        roomsRef.doc(props.roomID).add({
-            waypoints: toList,
+        roomsRef.doc(props.roomID).collection("waypoints").add({
+            waypoint: to,
         }, { merge: true })
         .then(() => {
             console.log(props.roomID);
