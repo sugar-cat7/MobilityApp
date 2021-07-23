@@ -38,7 +38,8 @@ const Home = () => {
           const doc = document.data();
           items.push({
             id: document.id,
-            location_name: doc.location_name
+            location_name: doc.location_name,
+            tag: doc.tag
           });
         });
         if(!newOrder){
@@ -64,7 +65,8 @@ const Home = () => {
           const doc = document.data();
           items.push({
             id: document.id,
-            location_name: doc.location_name
+            location_name: doc.location_name,
+            tag: doc.tag
           });
         });
         setDatas(items)

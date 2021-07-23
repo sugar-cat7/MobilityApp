@@ -27,7 +27,10 @@ export const InputNewRoute = (props) => {
             alert("経由地点が空欄です");
             return;
         }
-        addData(props.roomID, to, props.updateDatas);
+        addData(props.roomID, {
+          location_name: to,
+          tag: to
+        }, props.updateDatas);
 
         deleteValue();
         e.preventDefault();
@@ -42,7 +45,7 @@ export const InputNewRoute = (props) => {
                     navigator.geolocation.getCurrentPosition((position) => {
                         const pos = toString(position.coords.latitude) + toString(position.coords.longitude);
                         addData(props.roomID, {
-                            to: pos,
+                            location_name: pos,
                             tag: name + "の現在位置"
                         }, props.updateDatas);
                     })
@@ -53,7 +56,10 @@ export const InputNewRoute = (props) => {
             navigator.geolocation.getCurrentPosition((position) => {
                 const pos = String(position.coords.latitude) + ',' +  String(position.coords.longitude);
                 console.log(pos)
-                addData(props.roomID, name + "の現在位置", props.updateDatas);
+                addData(props.roomID, {
+                  location_name: pos,
+                  tag: name + "の現在位置"
+                }, props.updateDatas);
             });
         }
     }
