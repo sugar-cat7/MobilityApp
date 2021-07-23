@@ -2,66 +2,54 @@ import React, { useState, useCallback, useEffect } from "react";
 import { db } from "../lib/firebase";
 import useSWR from "swr";
 
-//外部APIとかDBからのfetch
-const fetcher = async () => {
-  const testFetchData = [];
-  const doc = await db.collection("test/texts/text").get();
-  if (doc) {
-    doc.forEach((d) => {
-      const data = d.data();
-      testFetchData.push({
-        id: d.id,
-        bodyText: data.bodyText,
-        createdAt: data.createdAt,
-      });
-    });
-  }
-  return testFetchData;
-};
-
 const Home = () => {
-  const [input, setInput] = useState("");
+  const [datas, setDatas] = useState([]);
+  const [liff, setLiff] = useState();
+  const [msg, setMsg] = useState('');
 
-  const onClickHandler = useCallback(() => {
-    //dbにデータを追加してる
-    const ref = db.collection("test/texts/text");
-    ref
-      .add({
-        bodyText: input,
-        createdAt: new Date(),
-      })
-      .then(() => {
-        alert("success!");
-        setInput("");
-      })
-      .catch((err) => {
-        alert("fail!", err.message);
-      });
-  }, [input]);
+  useEffect(() => {
+    const liff = require('@line/liff');
+    liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID }).then(() => {
+      if(!liff.isLoggedIn()){
+        liff.login();
+        setLiff(liff);
+      }
+      if(liff.isInClient()){
+        const context = liff.getContext();
+        const roomID =  context.roomId || context.groupId;
+        setMsg(roomID)
+        db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+          const items = [];
+          snapshot.forEach((document) => {
+            const doc = document.data();
+            alert(doc)
+            items.push({
+              id: document.id,
+              location_name: doc.location_name
+            });
+            alert(doc.location_name)
+          });
+          setDatas(items);
+        });
+      }else{
+        setMsg('undifined')
+      }
+    });
+  }, []);
 
-  const { data, error } = useSWR("firestore/test/texts/text", fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
-  if (!data) {
-    return null;
-  }
   return (
     <>
       <h1>
         下のテキストボックスに何か入れてローカルのFirestoreに保存されてるか確認してね
       </h1>
-      <input
-        value={input}
-        onChange={(e) => {
-          setInput(e.target.value);
-        }}
-      />
-      <button onClick={onClickHandler}> Send!!!! </button>
-      {!error &&
-        data.map((d) => {
-          return <div key={d.id}>テキスト:{d.bodyText}</div>;
-        })}
+      <div>roomId : {msg}</div>
+      {datas.map(i => {
+        return (
+          <div key={i.id}>
+            {i.location_name}
+          </div>
+        )
+      })}
     </>
   );
 };
