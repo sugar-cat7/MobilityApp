@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { db } from "../lib/firebase";
-import addData from "../lib/addData";
 import DraggableList from "../components/DraggableList";
 import arrayMove from 'array-move';
 import { InputNewRoute } from '../components/InputNewRoute';
@@ -16,13 +15,6 @@ const Home = () => {
   const [roomID, setRoomID] = useState('');
   const [order, setOrder] = useState([]);
   const [startingPointHere, setStartingPointHere] = useState(true);
-
-  function sleep(waitMsec) {
-    var startMsec = new Date();
-   
-    // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
-    while (new Date() - startMsec < waitMsec);
-  }
 
   // dbが更新された時に呼び出してリロードする
   const updateDatas = () => {
@@ -89,9 +81,6 @@ const Home = () => {
         const context = liff.getContext();
         const roomID =  context.roomId || context.groupId;
         setRoomID(roomID);
-        addData(roomID) // for debug
-        addData(roomID, "筑波大学") // for debug
-        addData(roomID, "東京駅") // for debug
         setLiff(liff);
       });
     }
