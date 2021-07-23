@@ -1,23 +1,38 @@
 import { db, fieldval } from "./firebase";
+import { nanoid } from "nanoid";
 
-export default async function addData(roomID, to = "つくば駅", cb){
-  db.collection('rooms').doc(roomID).collection('waypoints').add({
-    location_name: to
-  }).then((docRef) => {
-    db.collection('rooms').doc(roomID).get().then(doc => {
+// 引数のfirstのflagでエラー時の無限ループを防ぐ
+export default function addData(roomID, to, cb){
+  const ref = db.collection('rooms').doc(roomID);
+
+  db.runTransaction((transaction) => {
+    return transaction.get(ref).then(doc => {
+      const id = nanoid();
       if(doc.exists){
-        db.collection('rooms').doc(roomID).update({
-          order: fieldval.arrayUnion(docRef.id)
-        }).then(() => {
-          if(cb) cb();
-        });
+        transaction.update(ref, {
+          order: fieldval.arrayUnion(id)
+        })
+        transaction.set(ref.collection('waypoints').doc(id), to)
       }else{
-        db.collection('rooms').doc(roomID).set({
-          order: [docRef.id]
-        }).then(() => {
-          if(cb) cb();
+        transaction.set(doc, {
+          order: [id]
         });
+        transaction.set(ref.collection('waypoints').doc(id), to);
       }
+      return true
     })
+  }).then(() => {
+    cb();
+  }).catch(e => {
+    // transaction.setはfieldがない場合初期化しなければエラーが起きるのでデータを初期化
+    if(e.code === "invalid-argument"){
+      ref.set({
+        order: []
+      }).then(() => {
+        addData(roomID, to, cb)
+      });
+    }else{
+      console.log(e);
+    }
   })
 }
