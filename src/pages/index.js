@@ -50,6 +50,19 @@ const Home = () => {
         });
         setDatas(orderedItems);
       });
+    }).catch(err => {
+      alert(err)
+      db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+        const items = [];
+        snapshot.forEach((document) => {
+          const doc = document.data();
+          items.push({
+            id: document.id,
+            location_name: doc.location_name
+          });
+        });
+        setDatas(items)
+      });
     });
   }
 
