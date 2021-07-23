@@ -14,6 +14,25 @@ const Home = () => {
   const [liff, setLiff] = useState();
   const [roomID, setRoomID] = useState('');
 
+  // dbが更新された時に呼び出してリロードする
+  const updateDatas = () => {
+    if(!roomID){
+      console.log("roomID is undifined");
+      return;
+    }
+    db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
+      const items = [];
+      snapshot.forEach((document) => {
+        const doc = document.data();
+        items.push({
+          id: document.id,
+          location_name: doc.location_name
+        });
+      });
+      setDatas(items);
+    });
+  }
+
   useEffect(() => {
     const liff = require('@line/liff');
     if(liff.isInClient()){
@@ -23,19 +42,8 @@ const Home = () => {
         }
         const context = liff.getContext();
         const roomID =  context.roomId || context.groupId;
-        setRoomID(roomID) // for debug
+        setRoomID(roomID);
         sampleData(roomID) // for debug
-        db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
-          const items = [];
-          snapshot.forEach((document) => {
-            const doc = document.data();
-            items.push({
-              id: document.id,
-              location_name: doc.location_name
-            });
-          });
-          setDatas(items); 
-        });
         setLiff(liff);
       });
     }
@@ -45,22 +53,15 @@ const Home = () => {
     const liff = require('@line/liff');
     if(liff.isInClient()) return;
     if (router.asPath !== router.route) {
-      setRoomID(router.query.roomID);
-      const roomID = router.query.roomID
-      setRoomID(roomID) // for debug
-      db.collection('rooms').doc(roomID).collection('waypoints').get().then((snapshot) => {
-        const items = [];
-        snapshot.forEach((document) => {
-          const doc = document.data();
-          items.push({
-            id: document.id,
-            location_name: doc.location_name
-          });
-        });
-        setDatas(items); 
-      });
+      if(router.query.roomID) {
+        setRoomID(router.query.roomID);
+      }
     }
   }, [router]);
+
+  useEffect(() => {
+    updateDatas();
+  }, [roomID]);
 
   const onDrop = ({ removedIndex, addedIndex }) => {
     setDatas(arrayMove(datas, removedIndex, addedIndex));
@@ -70,7 +71,7 @@ const Home = () => {
   return (
     <>
       <div>roomId : {roomID}</div>
-      <DraggableList items={datas} onDrop={onDrop} />
+      <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <InputNewRoute />
       <MakeRoute />
     </>
