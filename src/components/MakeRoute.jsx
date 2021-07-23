@@ -12,7 +12,7 @@ export const MakeRoute = (props) => {
 
     const makeRoute = () => {
         // 経路を作成する処理を実行？
-        const googlemapBaseUrl = "https://www.google.co.jp/maps/dir/?api=1";
+        const googlemapBaseUrl = "https://www.google.co.jp/maps/dir/?api=1&travelmode=driving";
         const items = props.items
         const locationOrder = items.map(item => item.location_name)
         const startHere = props.startHere
