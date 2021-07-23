@@ -6,12 +6,12 @@
 .inputcontainer {
   display: flex;
   justify-content: space-between;
-  padding-left: 16px;
-  padding-right: 16px;
+  /* padding-left: 16px;
+  padding-right: 16px; */
 }
 
 .form {
-  flex-basis: 75%;
+  flex-basis: 80%;
   margin-right: 16px;
 }
 
