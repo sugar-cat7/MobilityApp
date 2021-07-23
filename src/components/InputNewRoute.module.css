@@ -6,6 +6,7 @@
 .inputcontainer {
   display: flex;
   justify-content: space-between;
+  margin-top: 16px;
   /* padding-left: 16px;
   padding-right: 16px; */
 }

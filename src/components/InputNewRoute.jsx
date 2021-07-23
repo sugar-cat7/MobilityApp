@@ -1,15 +1,12 @@
 import React, { useState } from "react";
-import { db } from "../lib/firebase";
 import addData from "../lib/addData";
 import styles from "./InputNewRoute.module.css";
 import { Button } from "@material-ui/core";
-
-const roomsRef = db.collection("rooms");
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 
 // 新しい目的地を追加
 export const InputNewRoute = (props) => {
   const [to, setTo] = useState("");
-  const [toList, setToList] = useState([]);
 
   // inputの値を取得
   const handleChange = (e) => {
@@ -98,8 +95,8 @@ export const InputNewRoute = (props) => {
         </Button>
       </div>
       <div className={styles.container}>
-        <Button color="primary" onClick={addCurrentPos} variant="contained">
-          現在地を追加
+        <Button color="primary" onClick={addCurrentPos} variant="contained" startIcon={<LocationOnIcon />}>
+          現在地を経路に追加
         </Button>
       </div>
     </>

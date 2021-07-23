@@ -5,8 +5,6 @@ import arrayMove from "array-move";
 import { InputNewRoute } from "../components/InputNewRoute";
 import { MakeRoute } from "../components/MakeRoute";
 import { useRouter } from "next/router";
-import SelectStart from "../components/SelectStart";
-import useSWR from "swr";
 import { Layout } from "../components/layout";
 
 const Home = () => {
@@ -15,7 +13,6 @@ const Home = () => {
   const [liff, setLiff] = useState();
   const [roomID, setRoomID] = useState("");
   const [order, setOrder] = useState([]);
-  const [startingPointHere, setStartingPointHere] = useState(true);
 
   // dbが更新された時に呼び出してリロードする
   const updateDatas = () => {
@@ -132,26 +129,13 @@ const Home = () => {
       });
   };
 
-  const onStartingPointChange = (e) => {
-    console.log(e.target.checked);
-    setStartingPointHere(e.target.checked);
-  };
 
   return (
     <Layout home>
       <div>roomId : {roomID}</div>
+      <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
-      <MakeRoute items={datas} startHere={startingPointHere} />
-      <DraggableList
-        items={datas}
-        onDrop={onDrop}
-        update={updateDatas}
-        roomID={roomID}
-      />
-      <SelectStart
-        checked={startingPointHere}
-        onChange={onStartingPointChange}
-      />
+      <MakeRoute items={datas} />
     </Layout>
   );
 };
