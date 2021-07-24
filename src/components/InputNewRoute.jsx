@@ -84,7 +84,7 @@ export const InputNewRoute = (props) => {
                     onChange={handleChange}
                     className={styles.input}
                     type="text"
-                    placeholder="追加の経由地点を入力してください"
+                    placeholder="経由地点を入力してください"
                 />
                 </form>
               <Button color="primary" variant="contained" onClick={addRoute}>追加</Button>

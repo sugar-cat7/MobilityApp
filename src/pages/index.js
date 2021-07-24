@@ -136,7 +136,6 @@ const Home = () => {
   return (
     <ThemeProvider theme={theme}>
     <Layout home>
-      <div>roomId : {roomID}</div>
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
       <MakeRoute items={datas} />

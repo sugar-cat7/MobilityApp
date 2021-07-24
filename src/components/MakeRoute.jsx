@@ -32,7 +32,7 @@ export const MakeRoute = (props) => {
             setUrl(mergedUrl)
         } else {
             const destinationUrl = "&destination=" + locationOrder[locationOrder.length - 1]
-            let waypointsUrl = "&waypoints=" + locationOrder.slice(1, locationOrder.length - 1).join("|")
+            let waypointsUrl = "&waypoints=" + locationOrder.slice(0, locationOrder.length - 1).join("|")
             if(waypointsUrl === "&waypoints=") waypointsUrl = ""; // 経由地点が存在しなければwaypointsUrlを消去
             const mergedUrl = googlemapBaseUrl + destinationUrl + waypointsUrl
             setUrl(mergedUrl)
