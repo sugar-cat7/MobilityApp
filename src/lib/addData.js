@@ -24,15 +24,16 @@ export default function addData(roomID, to, cb){
   }).then(() => {
     if(typeof cb === 'function') cb();
   }).catch(e => {
+    console.log(e)
     // transaction.setはfieldがない場合初期化しなければエラーが起きるのでデータを初期化
-    if(e.code === "invalid-argument"){
-      ref.set({
-        order: []
-      }).then(() => {
-        addData(roomID, to, cb)
-      });
-    }else{
-      console.log(e);
-    }
+    //if(e.code === "invalid-argument"){
+    //  ref.set({
+    //    order: []
+    //  }).then(() => {
+    //    addData(roomID, to, cb)
+    //  });
+    //}else{
+    //  console.log(e);
+    //}
   })
 }
