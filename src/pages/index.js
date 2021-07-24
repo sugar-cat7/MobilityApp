@@ -128,7 +128,6 @@ const Home = () => {
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <SelectStart checked={startingPointHere} onChange={onStartingPointChange} />
       <MakeRoute items={datas} startHere={startingPointHere} />
-      <NotLiffLocInfo />
     </Layout>
   );
 };

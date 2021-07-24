@@ -1,26 +1,29 @@
 import { useState } from "react"
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@material-ui/core"
-import { makeStyles } from "@material-ui/styles"
-import { maxWidth } from "@material-ui/system"
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@material-ui/core"
 
-export const NotLiffLocInfo = () => {
-    const [locationName, setLocationName] = useState()
+export const NotLiffLocInfo = (props) => {
+    const [name, setName] = useState()
 
     return (
         <Dialog
-            open={true}
+            open={props.openDialog}
             fullWidth="xs"
             maxWidth="xs"
             height={200}
         >
             <DialogTitle>地点名の登録</DialogTitle>
             <DialogContent>
-                <p>名前入力するところ</p>
-                <p>名前入力するところ</p>
-                <p>名前入力するところ</p>
+                <form>
+                    <input
+                        value={name}
+                        type="text"
+                        placeholder="名前を入力してください"
+                    />
+                </form>
             </DialogContent>
             <DialogActions>
-                <button>決定</button>
+                <Button color="primary" variant="contained" onClick={() => props.addCurrentPosNotLiff()}>追加する</Button>
+                <Button color="primary" variant="contained"　onClick={() => props.setOpenDialog()}>キャンセル</Button>
             </DialogActions>
         </Dialog>
     )

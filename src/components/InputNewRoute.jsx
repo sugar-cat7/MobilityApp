@@ -3,6 +3,7 @@ import { db } from '../lib/firebase';
 import addData from '../lib/addData'
 import styles from "./InputNewRoute.module.css";
 import { Button } from '@material-ui/core';
+import { NotLiffLocInfo } from './NotLiffLocInfo';
 
 const roomsRef = db.collection('rooms')
 
@@ -10,6 +11,7 @@ const roomsRef = db.collection('rooms')
 export const InputNewRoute = (props) => {
     const [to, setTo] = useState("")
     const [toList, setToList] = useState([])
+    const [openDialog, setOpenDialog] = useState(false)
 
     // inputの値を取得
     const handleChange = (e) => {
@@ -36,6 +38,18 @@ export const InputNewRoute = (props) => {
         e.preventDefault();
     };
 
+    const addCurrentPosNotLiff = () => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const pos = String(position.coords.latitude) + ',' +  String(position.coords.longitude);
+            console.log(pos)
+            addData(props.roomID, {
+              location_name: pos,
+              tag: name + "の現在位置"
+            }, props.updateDatas);
+        });
+    }
+
+
     const addCurrentPos = () => {
         const liff = require('@line/liff');
         if(liff.isInClient()){
@@ -52,15 +66,7 @@ export const InputNewRoute = (props) => {
                 });
             });
         }else{
-            const name = "匿名ユーザー";
-            navigator.geolocation.getCurrentPosition((position) => {
-                const pos = String(position.coords.latitude) + ',' +  String(position.coords.longitude);
-                console.log(pos)
-                addData(props.roomID, {
-                  location_name: pos,
-                  tag: name + "の現在位置"
-                }, props.updateDatas);
-            });
+            setOpenDialog(true)
         }
     }
 
@@ -81,6 +87,7 @@ export const InputNewRoute = (props) => {
             <div className={styles.container}>
                 <Button color="primary" onClick={addCurrentPos} variant="contained">現在地を追加</Button>
             </div>
+            <NotLiffLocInfo openDialog={openDialog} setOpenDialog={setOpenDialog} addCurrentPosNotLiff={addCurrentPosNotLiff}  />
         </>
     )
 }
