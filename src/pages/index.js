@@ -7,6 +7,15 @@ import { MakeRoute } from "../components/MakeRoute";
 import { useRouter } from "next/router";
 import { Layout } from "../components/layout";
 import setOrder from "../lib/setOrder";
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#2d8fdd"
+    }
+  },
+});
 
 const Home = () => {
   const router = useRouter();
@@ -62,7 +71,6 @@ const Home = () => {
             });
             setDatas(orderedItems);
           });
-          alert("aaa")
       })
       .catch((err) => {
         alert(err);
@@ -126,12 +134,14 @@ const Home = () => {
 
 
   return (
+    <ThemeProvider theme={theme}>
     <Layout home>
       <div>roomId : {roomID}</div>
       <DraggableList items={datas} onDrop={onDrop} update={updateDatas} roomID={roomID}/>
       <InputNewRoute roomID={roomID} updateDatas={updateDatas} />
       <MakeRoute items={datas} />
     </Layout>
+    </ThemeProvider>
   );
 };
 
