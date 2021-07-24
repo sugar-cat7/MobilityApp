@@ -46,6 +46,7 @@ export const InputNewRoute = (props) => {
           navigator.geolocation.getCurrentPosition((position) => {
             const pos =
               String(position.coords.latitude) +
+              ',' +
               String(position.coords.longitude);
             addData(
               props.roomID,
