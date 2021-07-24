@@ -12,7 +12,6 @@ const useStyles = makeStyles({
     }
 })
 
-// 使い回し用ボタンコンポーネント
 export const BasicButton = (props) => {
     const classes = useStyles();
 
