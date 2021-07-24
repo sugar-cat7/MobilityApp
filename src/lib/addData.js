@@ -14,7 +14,7 @@ export default function addData(roomID, to, cb){
         })
         transaction.set(ref.collection('waypoints').doc(id), to)
       }else{
-        transaction.set(doc, {
+        transaction.set(ref, {
           order: [id]
         });
         transaction.set(ref.collection('waypoints').doc(id), to);
