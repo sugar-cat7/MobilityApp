@@ -1,42 +1,45 @@
-import React, { useState } from 'react';
-import { db } from '../lib/firebase';
-import addData from '../lib/addData'
+import React, { useState } from "react";
+import addData from "../lib/addData";
 import styles from "./InputNewRoute.module.css";
 import { Button } from '@material-ui/core';
 import { NotLiffLocInfo } from './NotLiffLocInfo';
-
-const roomsRef = db.collection('rooms')
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 
 // 新しい目的地を追加
 export const InputNewRoute = (props) => {
     const [to, setTo] = useState("")
-    const [toList, setToList] = useState([])
     const [openDialog, setOpenDialog] = useState(false)
+    const [name, setName] = useState()
 
-    // inputの値を取得
-    const handleChange = (e) => {
-        setTo(() => e.target.value)
+
+  // inputの値を取得
+  const handleChange = (e) => {
+    setTo(() => e.target.value);
+  };
+
+  // inputを空にする
+  const deleteValue = () => {
+    setTo(() => "");
+  };
+
+  // 目的地を追加
+  const addRoute = (e) => {
+    if (!to) {
+      alert("経由地点が空欄です");
+      return;
     }
+    addData(
+      props.roomID,
+      {
+        location_name: to,
+        tag: to,
+      },
+      props.updateDatas
+    );
 
-    // inputを空にする
-    const deleteValue = () => {
-        setTo(() => "")
-    }
-
-    // 目的地を追加
-    const addRoute = (e) => {
-        if (!to) {
-            alert("経由地点が空欄です");
-            return;
-        }
-        addData(props.roomID, {
-          location_name: to,
-          tag: to
-        }, props.updateDatas);
-
-        deleteValue();
-        e.preventDefault();
-    };
+    deleteValue();
+    e.preventDefault();
+  };
 
     const addCurrentPosNotLiff = () => {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -47,6 +50,8 @@ export const InputNewRoute = (props) => {
               tag: name + "の現在位置"
             }, props.updateDatas);
         });
+        setOpenDialog(false)
+        setName("")
     }
 
 
@@ -87,7 +92,7 @@ export const InputNewRoute = (props) => {
             <div className={styles.container}>
                 <Button color="primary" onClick={addCurrentPos} variant="contained">現在地を追加</Button>
             </div>
-            <NotLiffLocInfo openDialog={openDialog} setOpenDialog={setOpenDialog} addCurrentPosNotLiff={addCurrentPosNotLiff}  />
+            <NotLiffLocInfo openDialog={openDialog} setOpenDialog={setOpenDialog} addCurrentPosNotLiff={addCurrentPosNotLiff} setName={setName} />
         </>
     )
 }

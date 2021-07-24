@@ -2,7 +2,9 @@ import { useState } from "react"
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@material-ui/core"
 
 export const NotLiffLocInfo = (props) => {
-    const [name, setName] = useState()
+    const handleChange = (e) => {
+        props.setName(() => e.target.value);
+    };
 
     return (
         <Dialog
@@ -15,9 +17,9 @@ export const NotLiffLocInfo = (props) => {
             <DialogContent>
                 <form>
                     <input
-                        value={name}
                         type="text"
                         placeholder="名前を入力してください"
+                        onChange={handleChange}
                     />
                 </form>
             </DialogContent>
