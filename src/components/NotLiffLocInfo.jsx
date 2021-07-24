@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@material-ui/core"
+import { Dialog, Button } from "@material-ui/core"
+import styles from './NotLiffLocInfo.module.css';
 
 export const NotLiffLocInfo = (props) => {
     const handleChange = (e) => {
@@ -13,20 +14,21 @@ export const NotLiffLocInfo = (props) => {
             maxWidth="xs"
             height={200}
         >
-            <DialogTitle>地点名の登録</DialogTitle>
-            <DialogContent>
-                <form>
+            <div className={styles.dialogContainer}>
+                <div>地点の表示名を入力してください</div>
+                <form className={styles.form}>
                     <input
                         type="text"
-                        placeholder="名前を入力してください"
+                        placeholder="表示名"
                         onChange={handleChange}
+                        className={styles.input}
                     />
                 </form>
-            </DialogContent>
-            <DialogActions>
-                <Button color="primary" variant="contained" onClick={() => props.addCurrentPosNotLiff()}>追加する</Button>
-                <Button color="primary" variant="contained"　onClick={() => props.setOpenDialog()}>キャンセル</Button>
-            </DialogActions>
+                <div className={styles.popupButtonContainer}>
+                    <div className={styles.popupButton}><Button color="primary" variant="contained" onClick={() => props.addCurrentPosNotLiff()}>追加する</Button></div>
+                    <div className={styles.popupButton}><Button color="primary" variant="contained"　onClick={() => props.setOpenDialog()}>キャンセル</Button></div>
+                </div>
+            </div>
         </Dialog>
     )
 }
