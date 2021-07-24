@@ -2,9 +2,6 @@ import { Container, Draggable } from "react-smooth-dnd";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import { ListItemText } from "@material-ui/core";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
-import RoomOutlinedIcon from "@material-ui/icons/RoomOutlined";
 import IconButton from "@material-ui/core/IconButton";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -14,7 +11,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import { db, fieldval } from "../lib/firebase";
 import deleteWaypointFunc from "../lib/deleteWaypoint";
 import styles from "./DraggableList.module.css";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
@@ -51,12 +47,8 @@ export default function DraggableList(props) {
                 key={item.id}
                 className={styles.draggableDailogWrapper}
               >
-                <ListItem>
-                  <ListItemAvatar>
-                    {/* <Avatar> */}
-                    <DragHandleIcon />
-                    {/* </Avatar> */}
-                  </ListItemAvatar>
+                <ListItem classes={{root: styles.listItem}} disableGutters>
+                    <DragHandleIcon classes={{root: styles.listIcon}}/>
                   <ListItemText primary={item.tag} />
                   <ListItemSecondaryAction>
                     <IconButton
