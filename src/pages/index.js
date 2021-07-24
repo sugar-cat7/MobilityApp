@@ -62,6 +62,7 @@ const Home = () => {
             });
             setDatas(orderedItems);
           });
+          alert("aaa")
       })
       .catch((err) => {
         alert(err);
@@ -92,7 +93,7 @@ const Home = () => {
           liff.login();
         }
         const context = liff.getContext();
-        const roomID = context.roomId || context.groupId;
+        const roomID = context.roomId || context.groupId || context.utouId;
         setRoomID(roomID);
         setLiff(liff);
       });
