@@ -62,7 +62,6 @@ const Home = () => {
             });
             setDatas(orderedItems);
           });
-          alert("aaa")
       })
       .catch((err) => {
         alert(err);
