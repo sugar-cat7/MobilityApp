@@ -6,13 +6,13 @@ import { InputNewRoute } from "../components/InputNewRoute";
 import { MakeRoute } from "../components/MakeRoute";
 import { useRouter } from "next/router";
 import { Layout } from "../components/layout";
+import setOrder from "../lib/setOrder";
 
 const Home = () => {
   const router = useRouter();
   const [datas, setDatas] = useState([]);
   const [liff, setLiff] = useState();
   const [roomID, setRoomID] = useState("");
-  const [order, setOrder] = useState([]);
 
   // dbが更新された時に呼び出してリロードする
   const updateDatas = () => {
@@ -30,7 +30,6 @@ const Home = () => {
           return;
         }
         const newOrder = field.data().order;
-        setOrder(newOrder);
         // 経由地点のデータを取得
         db.collection("rooms")
           .doc(roomID)
@@ -119,14 +118,9 @@ const Home = () => {
     setDatas(newData);
     // fieldの書き換え処理を追記する
     const newOrder = newData.map((data) => data.id);
-    db.collection("rooms")
-      .doc(roomID)
-      .set({
-        order: newOrder,
-      })
-      .then(() => {
-        updateDatas();
-      });
+    setOrder(roomID, newOrder, () => {
+      updateDatas();
+    });
   };
 
 
