@@ -62,7 +62,7 @@ export const InputNewRoute = (props) => {
                 liff.getProfile().then(profile => {
                     const name = profile.displayName;
                     navigator.geolocation.getCurrentPosition((position) => {
-                        const pos = toString(position.coords.latitude) + toString(position.coords.longitude);
+                        const pos = String(position.coords.latitude) + String(position.coords.longitude);
                         addData(props.roomID, {
                             location_name: pos,
                             tag: name + "の現在位置"
