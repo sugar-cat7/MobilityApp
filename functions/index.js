@@ -4,11 +4,11 @@ const express = require("express");
 const admin = require("firebase-admin");
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
-
+const nanoid = require("nanoid");
 const line = require("@line/bot-sdk");
 const config = {
-  channelSecret: process.env.NEXT_PUBLIC_CHANNEL_SECLET, // LINE Developersでの準備②でメモったChannel Secret
-  channelAccessToken: process.env.NEXT_PUBLIC_ACCESS_TOKEN, // LINE Developersでの準備②でメモったアクセストークン
+  channelSecret: process.env.LINE_CHANNEL_SECLET, // LINE Developersでの準備②でメモったChannel Secret
+  channelAccessToken: process.env.LINE_ACCESS_TOKEN, // LINE Developersでの準備②でメモったアクセストークン
 };
 
 const app = express();
@@ -27,14 +27,14 @@ function addData(roomID, to, cb) {
 
   db.runTransaction((transaction) => {
     return transaction.get(ref).then((doc) => {
-      const id = nanoid();
+      const id = nanoid.nanoid();
       if (doc.exists) {
         transaction.update(ref, {
           order: fieldval.arrayUnion(id),
         });
         transaction.set(ref.collection("waypoints").doc(id), to);
       } else {
-        transaction.set(doc, {
+        transaction.set(ref, {
           order: [id],
         });
         transaction.set(ref.collection("waypoints").doc(id), to);
@@ -43,7 +43,7 @@ function addData(roomID, to, cb) {
     });
   })
     .then(() => {
-      cb();
+      if (typeof cb == "function") cb();
     })
     .catch((e) => {
       // transaction.setはfieldがない場合初期化しなければエラーが起きるのでデータを初期化
@@ -66,36 +66,103 @@ async function handleEvent(event) {
     return Promise.resolve(null);
   }
 
-  var mention = "@mobility.app-bot";
-  if (event.message.text.includes(mention)) {
-    var addPoint = event.message.text.replace(mention, " ");
+  const replyMessageCardTemplate = {
+    type: "flex",
+    altText: "This is a Flex Message",
+    contents: {
+      type: "bubble",
+      header: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "text",
+            text: "かんたん経路くん",
+            color: "#FFFFFF",
+            weight: "bold",
+            align: "center",
+          },
+        ],
+      },
+      hero: {
+        type: "image",
+        url: "https://2.bp.blogspot.com/-AJw0SFWdLtI/VUIJuN6RyMI/AAAAAAAAtYI/oXi74oTbAGw/s800/car_jidou_unten.png",
+        size: "lg",
+        align: "center",
+        gravity: "center",
+        margin: "none",
+        action: {
+          type: "uri",
+          label: "かんたん経路くんで確認する",
+          uri: "https://liff.line.me/1656243134-07POGapz",
+        },
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "button",
+            action: {
+              type: "uri",
+              uri: "https://liff.line.me/1656243134-07POGapz",
+              label: "かんたん経路くんで確認する",
+            },
+            style: "secondary",
+          },
+        ],
+      },
+      action: {
+        type: "uri",
+        label: "action",
+        uri: "https://liff.line.me/1656243134-07POGapz",
+      },
+      styles: {
+        header: {
+          backgroundColor: "#00B900",
+        },
+      },
+    },
+  };
+
+  if (
+    /^(簡単経路君|かんたん経路くん|かんたん経路君|簡単経路くん)$/.test(
+      event.message.text
+    )
+  ) {
+    const replyMessage = [
+      {
+        type: "text",
+        text: "こんにちは、かんたん経路くんです！\n  かんたん経路くん [目的地]を入力して送信すると自動的に目的地が追加されるよ！",
+      },
+      replyMessageCardTemplate,
+    ];
+    return client.replyMessage(event.replyToken, replyMessage);
+  }
+
+  if (
+    /^(簡単経路君|かんたん経路くん|かんたん経路君|簡単経路くん)/.test(
+      event.message.text
+    )
+  ) {
+    const mention = event.message.text.match(
+      /^(簡単経路君|かんたん経路くん|かんたん経路君|簡単経路くん)/
+    );
+    const addPoint = event.message.text.replace(mention[0], " ");
+    console.log(event.source.roomId);
     addData(
       event.source.roomId,
       { location_name: addPoint, tag: addPoint },
       null
     );
-    const obj = {
-      type: "flex",
-      altText: "This is a Flex Message",
-      contents: {
-        type: "bubble",
-        body: {
-          type: "box",
-          layout: "horizontal",
-          contents: [
-            {
-              type: "text",
-              text: "Hello,",
-            },
-            {
-              type: "text",
-              text: "World!",
-            },
-          ],
-        },
+    const replyMessage = [
+      {
+        type: "text",
+        text: `目的地${addPoint}が追加されたよ！`,
       },
-    };
-    return client.replyMessage(event.replyToken, obj);
+      replyMessageCardTemplate,
+    ];
+    return client.replyMessage(event.replyToken, replyMessage);
   }
 }
 
