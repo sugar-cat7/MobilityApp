@@ -31,6 +31,7 @@ export default function DraggableList(props) {
 
   return (
     <div>
+      <h2 className={styles.title}>予定経路</h2>
       <List>
         <Container onDrop={props.onDrop}>
           {props.items.map((item) => {
