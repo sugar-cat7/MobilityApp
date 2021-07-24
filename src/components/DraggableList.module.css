@@ -12,3 +12,16 @@
 .listIcon{
   margin-right: 8px;
 }
+
+.dialogContainer {
+  padding: 24px;
+}
+
+.popupButtonContainer {
+  display: flex;
+  padding-top: 16px;
+}
+
+.popupButton {
+  margin: auto;
+}
